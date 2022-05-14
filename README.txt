@@ -9,3 +9,5 @@ https://www.npmjs.com/package/axios
 https://pokeapi.co/docs/v2#info
 
 Heroku Link - https://gentle-reaches-73349.herokuapp.com/ 
+
+YouTube Link - https://youtu.be/_NNvcetMgrU 
