@@ -18,4 +18,8 @@ const databaseAndCollection = {db: process.env.MONGO_DB_NAME, collection: proces
 
 process.stdin.setEncoding("utf8");
 
-app.listen(process.env.)
+app.get("/", function(request, response) {
+    response.write("<h1>hello</h1>")
+})
+
+app.listen(process.env.PORT)
