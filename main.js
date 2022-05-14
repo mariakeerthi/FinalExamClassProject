@@ -17,3 +17,5 @@ const password = process.env.MONGO_DB_PASSWORD;
 const databaseAndCollection = {db: process.env.MONGO_DB_NAME, collection: process.env.MONGO_COLLECTION};
 
 process.stdin.setEncoding("utf8");
+
+app.listen(process.env.)
