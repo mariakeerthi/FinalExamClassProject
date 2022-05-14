@@ -32,6 +32,33 @@ app.get('/', function(request, response) {
     response.write("<a href='viewFavorite'>View your favorite pokemon</a>")
 })
 
+app.get("/viewFavorite", function(request, response) {
+    response.render("viewFavorite", {errorMsg: ""});
+})
+
+app.post("/viewFavorite", function(request, response) {
+    let email = request.body.email;
+
+    let filter = {Email: email};
+
+    (async () => {
+        try {
+            await client.connect();
+            const result = await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).findOne(filter);
+            await client.close();
+
+            let url = `https://pokeapi.co/api/v2/pokemon/${result.Pokemon}/`;
+
+            axios.get(url)
+            .then(res => {result["Image"] = res.data.sprites.front_default; response.render("viewFavoritePost", result)})
+            .catch(error => response.render("viewFavorite", {errorMsg: `${pokemon} is an invalid pokemon.`}))
+        }
+        catch (e) {
+            response.render("viewFavorite", {errorMsg: `${email} is an invalid email... Try again :)`})
+        }
+    })();
+})
+
 app.get("/setFavorite", function(request, response) {
     response.render("setFavorite", {errorMsg: ""})
 })
@@ -46,17 +73,15 @@ app.post("/setFavorite", function(request, response) {
     let url = `https://pokeapi.co/api/v2/pokemon/${pokemon}/`;
 
     axios.get(url)
-        .then(res => process(res))
+        .then(result => process(result))
         .catch(error => response.render("setFavorite", {errorMsg: `${pokemon} is an invalid pokemon.`}))
 
     async function process(res) {
-        apiJson = res.json();
-
-        let imgURL = apiJson.sprites.other.dream_world.front_default;
+        let imgURL = res.data.sprites.front_default;
 
         try {
             await client.connect();
-            const result = await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).insertOne(newEntry);
+            await client.db(databaseAndCollection.db).collection(databaseAndCollection.collection).insertOne(newEntry);
         
             await client.close();
 
@@ -69,6 +94,8 @@ app.post("/setFavorite", function(request, response) {
         }
     }
 })
+
+
 
 app.listen(portNumber, () => {
     console.log(`Web server started and running at http://localhost:${portNumber}`);
