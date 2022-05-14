@@ -6,13 +6,14 @@ const path = require("path");
 const axios = require("axios").default;
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(__dirname + '/templates'));
 
 app.set("views", path.resolve(__dirname, "templates"));
 app.set("view engine", "ejs");
 
 require("dotenv").config({ path: path.resolve(__dirname, '.env') }) 
 
-let portNumber = 4000;
+let portNumber = process.env.PORT;
 
 const userName = process.env.MONGO_DB_USERNAME;
 const password = process.env.MONGO_DB_PASSWORD;
@@ -27,9 +28,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 process.stdin.setEncoding("utf8");
 
 app.get('/', function(request, response) {
-    response.write("<h1>W E L C O M E</h1>");
-    response.write("<a href='setFavorite'>Submit your favorite pokemon</a><br>")
-    response.write("<a href='viewFavorite'>View your favorite pokemon</a>")
+    response.render("home", {});
 })
 
 app.get("/viewFavorite", function(request, response) {
